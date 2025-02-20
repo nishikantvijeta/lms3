@@ -1,222 +1,135 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-hot-toast";
-import axiosInstance from "../Helper/axiosInstance";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "../../helpers/axiosInstance";
+import toast from "react-hot-toast";
 
-// const initialState = {
-//   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
-//   data: JSON.parse(localStorage.getItem("data")) || {},
-//   role: localStorage.getItem("role") || "",
-// };
-const initialState = {
-  isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
-  data: localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : {},
-  role: localStorage.getItem("role") || "",
-};
-
-//const parsedData = JSON.parse(data);
-// function to handle signup
-export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
-  try {
-
-    console.log("creating the account: ");
-    let res = axiosInstance.post("user/register", data);
-
-    console.log("res(under create account): ",res)
-
-    toast.promise(res, {
-      loading: "Wait! Creating your account",
-      success: (data) => {
-        console.log("data: ", data);
-        return data?.data?.message;
-      },
-      error: "Failed to create account",
-    });
-
-    // getting response resolved here
-    res = await res;
-    return res.data;
-  } catch (error) {
-    toast.error(error?.response?.data?.message);
-  }
-});
-
-// function to handle login
+// ✅ Login Function
 export const login = createAsyncThunk("auth/login", async (data) => {
   try {
-    // console.log("Login Request Data:", data);
+    console.log("🔑 Attempting Login with Data:", data);
+
     let res = axiosInstance.post("/user/login", data);
-    // console.log("Login response:", res.data);
     await toast.promise(res, {
-      loading: "Loading...",
-      success: (data) => {
-        return data?.data?.message;
-      },
+      loading: "Logging in...",
+      success: (data) => data?.data?.message,
       error: "Failed to log in",
     });
 
-    // getting response resolved here
     res = await res;
+    console.log("✅ Login Success:", res.data);
+
+    // Store token & user details
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("data", JSON.stringify(res.data.user));
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("role", res.data.user.role);
+
     return res.data;
   } catch (error) {
+    console.error("❌ Login Failed:", error?.response?.data?.message || error.message);
     toast.error(error.message);
+    throw error;
   }
 });
 
-// function to handle logout
+// ✅ Fetch User Data Function
+export const getUserData = createAsyncThunk("/user/details", async () => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("📝 Fetching User Data...");
+    console.log("🔍 Stored Token:", token);
+
+    if (!token) {
+      console.warn("⚠️ No Token Found! User might not be logged in.");
+      throw new Error("No authentication token found");
+    }
+
+    const res = await axiosInstance.get("/user/me");
+    console.log("👤 User Data:", res?.data);
+    return res?.data;
+  } catch (error) {
+    console.error("❌ Fetch User Failed:", error.response?.data?.message || error.message);
+    toast.error(error.response?.data?.message || "Unauthorized request");
+    throw error;
+  }
+});
+
+// ✅ Logout Function
 export const logout = createAsyncThunk("auth/logout", async () => {
   try {
+    console.log("🚪 Logging Out...");
     let res = axiosInstance.post("/user/logout");
 
     await toast.promise(res, {
-      loading: "Loading...",
-      success: (data) => {
-        return data?.data?.message;
-      },
+      loading: "Logging out...",
+      success: (data) => data?.data?.message,
       error: "Failed to log out",
     });
 
-    // getting response resolved here
     res = await res;
+    console.log("✅ Logout Successful:", res.data);
+
+    // Clear localStorage
+    localStorage.clear();
+    console.log("🗑️ Local Storage Cleared!");
+
     return res.data;
   } catch (error) {
+    console.error("❌ Logout Failed:", error.message);
     toast.error(error.message);
+    throw error;
   }
 });
 
-// function to fetch user data
-export const getUserData = createAsyncThunk("/user/details", async () => {
-  try {
-    const res = await axiosInstance.get("/user/me");
-    return res?.data;
-  } catch (error) {
-    toast.error(error.message);
-  }
-});
+// ✅ Initial State
+const initialState = {
+  isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
+  user: JSON.parse(localStorage.getItem("data")) || null,
+  loading: false,
+  error: null,
+};
 
-// function to change user password
-export const changePassword = createAsyncThunk(
-  "/auth/changePassword",
-  async (userPassword) => {
-    try {
-      let res = axiosInstance.post("/user/change-password", userPassword);
-
-      await toast.promise(res, {
-        loading: "Loading...",
-        success: (data) => {
-          return data?.data?.message;
-        },
-        error: "Failed to change password",
-      });
-
-      // getting response resolved here
-      res = await res;
-      return res.data;
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  }
-);
-
-// function to handle forget password
-export const forgetPassword = createAsyncThunk(
-  "auth/forgetPassword",
-  async (email) => {
-    try {
-      let res = axiosInstance.post("/user/reset", { email });
-
-      await toast.promise(res, {
-        loading: "Loading...",
-        success: (data) => {
-          return data?.data?.message;
-        },
-        error: "Failed to send verification email",
-      });
-
-      // getting response resolved here
-      res = await res;
-      return res.data;
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  }
-);
-
-// function to update user profile
-export const updateProfile = createAsyncThunk(
-  "/user/update/profile",
-  async (data) => {
-    try {
-      let res = axiosInstance.put(`/user/update/${data[0]}`, data[1]);
-
-      toast.promise(res, {
-        loading: "Updating...",
-        success: (data) => {
-          return data?.data?.message;
-        },
-        error: "Failed to update profile",
-      });
-      // getting response resolved here
-      res = await res;
-      return res.data;
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  }
-);
-
-// function to reset the password
-export const resetPassword = createAsyncThunk("/user/reset", async (data) => {
-  try {
-    let res = axiosInstance.post(`/user/reset/${data.resetToken}`, {
-      password: data.password,
-    });
-
-    toast.promise(res, {
-      loading: "Resetting...",
-      success: (data) => {
-        return data?.data?.message;
-      },
-      error: "Failed to reset password",
-    });
-    // getting response resolved here
-    res = await res;
-    return res.data;
-  } catch (error) {
-    toast.error(error?.response?.data?.message);
-  }
-});
-
+// ✅ Create Slice
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // for user login
+      // Login Reducers
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(login.fulfilled, (state, action) => {
-        localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-        localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("role", action?.payload?.user?.role);
+        state.loading = false;
         state.isLoggedIn = true;
-        state.data = action?.payload?.user;
-        state.role = action?.payload?.user?.role;
+        state.user = action.payload.user;
       })
-      // for user logout
-      .addCase(logout.fulfilled, (state) => {
-        localStorage.clear();
-        state.isLoggedIn = false;
-        state.data = {};
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
-      // for user details
+      
+      // Fetch User Data Reducers
+      .addCase(getUserData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(getUserData.fulfilled, (state, action) => {
-        localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-        localStorage.setItem("isLoggedIn", true);
-        state.isLoggedIn = true;
-        state.data = action?.payload?.user;
-        state.role = action?.payload?.user?.role;
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUserData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Logout Reducers
+      .addCase(logout.fulfilled, (state) => {
+        state.isLoggedIn = false;
+        state.user = null;
       });
   },
 });
 
-//export const {} = authSlice.actions;
 export default authSlice.reducer;
