@@ -11,10 +11,14 @@ axiosInstance.interceptors.request.use((config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log("📡 Token Attached:", token);
+  }else {
+    console.log("📡 Token Attached: No Token Found");
   }
+
   return config;
 }, (error) => {
-  console.error("❌ Request Error:", error);
+  console.error(" Request Error:", error);
   return Promise.reject(error);
 });
 
