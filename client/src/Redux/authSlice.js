@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 // ✅ Login Function
 export const login = createAsyncThunk("auth/login", async (data) => {
   try {
-    console.log("🔑 Attempting Login with Data:", data);
+    console.log(" Attempting Login with Data:", data);
 
     let res = axiosInstance.post("/user/login", data);
     await toast.promise(res, {
@@ -15,7 +15,7 @@ export const login = createAsyncThunk("auth/login", async (data) => {
     });
 
     res = await res;
-    console.log("✅ Login Success:", res.data);
+    console.log(" Login Success:", res.data);
 
     // Store token & user details
     localStorage.setItem("token", res.data.token);
@@ -25,7 +25,7 @@ export const login = createAsyncThunk("auth/login", async (data) => {
 
     return res.data;
   } catch (error) {
-    console.error("❌ Login Failed:", error?.response?.data?.message || error.message);
+    console.error(" Login Failed:", error?.response?.data?.message || error.message);
     toast.error(error.message);
     throw error;
   }
@@ -39,15 +39,15 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
     console.log("🔍 Stored Token:", token);
 
     if (!token) {
-      console.warn("⚠️ No Token Found! User might not be logged in.");
+      console.warn(" No Token Found! User might not be logged in.");
       throw new Error("No authentication token found");
     }
 
-    const res = await axiosInstance.get("/user/me");
-    console.log("👤 User Data:", res?.data);
+    const res = await axiosInstance.get("/user/me",{ withCredentials: true });
+    console.log(" User Data:", res?.data);
     return res?.data;
   } catch (error) {
-    console.error("❌ Fetch User Failed:", error.response?.data?.message || error.message);
+    console.error(" Fetch User Failed:", error.response?.data?.message || error.message);
     toast.error(error.response?.data?.message || "Unauthorized request");
     throw error;
   }
@@ -56,7 +56,7 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
 // ✅ Logout Function
 export const logout = createAsyncThunk("auth/logout", async () => {
   try {
-    console.log("🚪 Logging Out...");
+    console.log(" Logging Out...");
     let res = axiosInstance.post("/user/logout");
 
     await toast.promise(res, {
@@ -66,15 +66,15 @@ export const logout = createAsyncThunk("auth/logout", async () => {
     });
 
     res = await res;
-    console.log("✅ Logout Successful:", res.data);
+    console.log(" Logout Successful:", res.data);
 
     // Clear localStorage
     localStorage.clear();
-    console.log("🗑️ Local Storage Cleared!");
+    console.log("Local Storage Cleared!");
 
     return res.data;
   } catch (error) {
-    console.error("❌ Logout Failed:", error.message);
+    console.error(" Logout Failed:", error.message);
     toast.error(error.message);
     throw error;
   }
