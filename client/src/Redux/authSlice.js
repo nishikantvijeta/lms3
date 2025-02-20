@@ -43,9 +43,15 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 // function to handle login
 export const login = createAsyncThunk("auth/login", async (data) => {
   try {
-    // console.log("Login Request Data:", data);
+     console.log("Login Request Data:", data);
     let res = axiosInstance.post("/user/login", data);
-    // console.log("Login response:", res.data);
+    console.log("Login response:", res.data);
+     if(res.data.token){
+      // Store token in localStorage
+      localStorage.setItem("token", res.data.token);
+
+      console.log("🔑 Token stored:", res.data.token);
+    }
     await toast.promise(res, {
       loading: "Loading...",
       success: (data) => {
