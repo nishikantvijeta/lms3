@@ -1,25 +1,12 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: "https://lms-server-6-9fwo.onrender.com/api/v1/",
-});
 
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  console.log("🚀 Request Sent to:", config.url);
-  console.log("📡 Token Attached:", token ? `Bearer ${token}` : "No Token Found");
+  const BASE_URL="https://lms-server-6-9fwo.onrender.com/api/v1";
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-    console.log("📡 Token Attached:", token);
-  }else {
-    console.log("📡 Token Attached: No Token Found");
-  }
 
-  return config;
-}, (error) => {
-  console.error(" Request Error:", error);
-  return Promise.reject(error);
-});
+const axiosInstance = axios.create();
+
+axiosInstance.defaults.baseURL = BASE_URL;
+axiosInstance.defaults.withCredentials = true;
 
 export default axiosInstance;
