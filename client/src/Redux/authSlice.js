@@ -88,8 +88,8 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 export const getUserData = createAsyncThunk("/user/details", async () => {
   try {
     const res = await axiosInstance.get("/user/me", {
-      method: "GET",
-    credentials: "include",
+      
+    credentials: true,
     });
 
     return res?.data;
