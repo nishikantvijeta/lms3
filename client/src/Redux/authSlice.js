@@ -19,7 +19,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
   try {
 
     console.log("creating the account: ");
-    let res = axiosInstance.post("user/register", data);
+    let res = await axiosInstance.post("user/register", data,{ withCredentials: true });
 
     console.log("res(under create account): ",res)
 
@@ -44,7 +44,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 export const login = createAsyncThunk("auth/login", async (data) => {
   try {
      console.log("Login Request Data:", data);
-    let res = axiosInstance.post("/user/login", data);
+    let res = await axiosInstance.post("/user/login", data,{ withCredentials: true });
     console.log("Login response:", res.data);
      
     await toast.promise(res, {
@@ -66,7 +66,7 @@ export const login = createAsyncThunk("auth/login", async (data) => {
 // function to handle logout
 export const logout = createAsyncThunk("auth/logout", async () => {
   try {
-    let res = axiosInstance.post("/user/logout");
+    let res = await axiosInstance.post("/user/logout");
 
     await toast.promise(res, {
       loading: "Loading...",
@@ -88,7 +88,7 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 export const getUserData = createAsyncThunk("/user/details", async () => {
   try {
    const res = await axiosInstance.get("/user/me", { withCredentials: true });
-
+console.log("User Data:", res.data);
     return res?.data;
   } catch (error) {
     toast.error(error.message);
@@ -124,7 +124,7 @@ export const forgetPassword = createAsyncThunk(
   "auth/forgetPassword",
   async (email) => {
     try {
-      let res = axiosInstance.post("/user/reset", { email });
+      let res = await axiosInstance.post("/user/reset", { email });
 
       await toast.promise(res, {
         loading: "Loading...",
@@ -148,7 +148,7 @@ export const updateProfile = createAsyncThunk(
   "/user/update/profile",
   async (data) => {
     try {
-      let res = axiosInstance.put(`/user/update/${data[0]}`, data[1]);
+      let res =await axiosInstance.put(`/user/update/${data[0]}`, data[1]);
 
       toast.promise(res, {
         loading: "Updating...",
@@ -169,7 +169,7 @@ export const updateProfile = createAsyncThunk(
 // function to reset the password
 export const resetPassword = createAsyncThunk("/user/reset", async (data) => {
   try {
-    let res = axiosInstance.post(`/user/reset/${data.resetToken}`, {
+    let res = await axiosInstance.post(`/user/reset/${data.resetToken}`, {
       password: data.password,
     });
 
