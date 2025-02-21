@@ -89,7 +89,7 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
   try {
     const res = await axiosInstance.get("/user/me", {
       
-    withcredentials: true,
+    withCredentials: true,
     });
 
     return res?.data;
