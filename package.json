@@ -5,8 +5,9 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "build": "npm install --production"
   },
   "keywords": [],
   "author": "",
