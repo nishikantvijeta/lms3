@@ -8,7 +8,7 @@ Both the **frontend** and **backend** servers are started using:
 npm run start
 ```
 
-About the Project
+#About the Project
 This LMS Dashboard was created to simulate a real-world education management platform. It includes:
 
 User authentication (students/instructors)
