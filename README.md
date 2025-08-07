@@ -20,8 +20,8 @@ Dashboard for tracking learning progress
 Responsive UI
 
 Secure backend API integration
-
- Technologies Used
+  # ⚙️  Technologies Used
+  
 Frontend: React.js, HTML, CSS, JavaScript
 
 Backend: Node.js, Express.js
