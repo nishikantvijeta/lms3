@@ -9,15 +9,23 @@ npm run start
 ```
 
 # About the Project
-This LMS Dashboard was created to simulate a real-world education management platform. It includes:
+This LMS Dashboard was created to simulate a real-world education management platform with end-to-end functionality. It includes:
 
-User authentication (students/instructors)
+User Authentication — Secure login and signup for both students and instructors.
 
-Course management
+Course Management — Create, update, and manage courses with ease.
 
-Dashboard for tracking learning progress
+Learning Progress Dashboard — Track course completion, assignments, and grades in real time.
 
-Responsive UI
+Responsive UI — Optimized for desktop, tablet, and mobile devices.
+
+Secure Backend API Integration — Ensuring data safety and smooth operations.
+
+Razorpay Payment Integration — Secure and seamless payment processing for course enrollments.
+
+Change Password Feature — Allow users to securely update their account password.
+
+Contact Form — Users can easily reach out by filling out a form for queries or support.
 
 Secure backend API integration
   # ⚙️  Technologies Used
