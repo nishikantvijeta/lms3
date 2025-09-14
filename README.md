@@ -27,6 +27,8 @@ Change Password Feature — Allow users to securely update their account passwor
 
 Contact Form — Users can easily reach out by filling out a form for queries or support.
 
+ChaBot- User can interact with chatbot for any doubt related to study or any query
+
 Secure backend API integration
   # ⚙️  Technologies Used
   
